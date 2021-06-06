@@ -63,7 +63,7 @@ namespace Reactivities
 
             // app.UseSpa(spa =>
             // {
-            //     spa.Options.SourcePath = "ClientApp";
+            //     spa.Options.SourcePath = "client-app";
             //
             //     if (env.IsDevelopment())
             //     {
