@@ -32,6 +32,14 @@ namespace Reactivities
             {
                 opt.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:5001");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,11 +56,13 @@ namespace Reactivities
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            //app.UseHttpsRedirection();
+            //app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
@@ -61,16 +71,16 @@ namespace Reactivities
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            // app.UseSpa(spa =>
-            // {
-            //     spa.Options.SourcePath = "client-app";
-            //
-            //     if (env.IsDevelopment())
-            //     {
-            //         //spa.UseReactDevelopmentServer(npmScript: "start");
-            //         spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-            //     }
-            // });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "client-app";
+            
+                if (env.IsDevelopment())
+                {
+                    //spa.UseReactDevelopmentServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                }
+            });
         }
     }
 }
