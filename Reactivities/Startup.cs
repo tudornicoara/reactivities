@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Reactivities.Activities;
 using Reactivities.Core;
 using Reactivities.Data;
+using Reactivities.Extensions;
 
 namespace Reactivities
 {
@@ -29,23 +30,8 @@ namespace Reactivities
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseSqlite(_config.GetConnectionString("DefaultConnection"));
-            });
 
-            services.AddCors(opt =>
-            {
-                opt.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:5001");
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://192.168.1.37:3000");
-                });
-            });
-
-            services.AddMediatR(typeof(List.Handler).Assembly);
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddApplicationServices(_config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
