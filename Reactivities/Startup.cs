@@ -52,6 +52,13 @@ namespace Reactivities
             //app.UseStaticFiles();
             //app.UseSpaStaticFiles();
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reactivities");
+            });
+
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
