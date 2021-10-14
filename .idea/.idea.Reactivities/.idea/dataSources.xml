@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="reactivities" uuid="0aa94841-6ecc-4334-959d-b1dad41cf7a8">
+    <data-source source="LOCAL" name="reactivities" uuid="e0cc55ed-8ef0-410e-b2e3-53cde7658f5f">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\tudor.nicoara\RiderProjects\Reactivities\Reactivities\reactivities.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\tunicoara\Documents\Personal Projects\reactivities\Reactivities\reactivities.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.34.0/sqlite-jdbc-3.34.0.jar</url>
+        </library>
         <library>
           <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.34.0/sqlite-jdbc-3.34.0.jar</url>
         </library>
