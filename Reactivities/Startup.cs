@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Reactivities.Activities;
 using Reactivities.Core;
 using Reactivities.Data;
 using Reactivities.Extensions;
+using Reactivities.Middleware;
 
 namespace Reactivities
 {
@@ -23,7 +25,10 @@ namespace Reactivities
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddFluentValidation(config =>
+            {
+                config.RegisterValidatorsFromAssemblyContaining<Create>();
+            });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -37,9 +42,12 @@ namespace Reactivities
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ExceptionMiddleware>();
+            
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reactivities"));
             }
             else
             {
@@ -51,13 +59,6 @@ namespace Reactivities
             //app.UseHttpsRedirection();
             //app.UseStaticFiles();
             //app.UseSpaStaticFiles();
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reactivities");
-            });
 
             app.UseRouting();
 
