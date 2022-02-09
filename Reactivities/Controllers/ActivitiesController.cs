@@ -7,6 +7,7 @@ using Reactivities.Entities;
 
 namespace Reactivities.Controllers
 {
+    [AllowAnonymous]
     public class ActivitiesController : BaseApiController
     {
         [HttpGet]
