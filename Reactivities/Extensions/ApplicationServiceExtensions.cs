@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Reactivities.Activities;
 using Reactivities.Core;
 using Reactivities.Data;
+using Reactivities.Interfaces;
+using Reactivities.Security;
 
 namespace Reactivities.Extensions
 {
@@ -32,6 +34,7 @@ namespace Reactivities.Extensions
 
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddScoped<IUserAccessor, UserAccessor>();
 
             return services;
         }
