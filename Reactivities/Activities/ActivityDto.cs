@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Reactivities.DTOs;
 using Reactivities.Profiles;
 
 namespace Reactivities.Activities
@@ -15,6 +16,6 @@ namespace Reactivities.Activities
         public string Venue { get; set; }
         public string HostUsername { get; set; }
         public bool IsCancelled { get; set; }
-        public ICollection<Profile> Attendees { get; set; }
+        public ICollection<AttendeeDto> Attendees { get; set; }
     }
 }
