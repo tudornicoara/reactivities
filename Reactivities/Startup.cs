@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Reactivities.Activities;
 using Reactivities.Extensions;
 using Reactivities.Middleware;
+using Reactivities.SignalR;
 
 namespace Reactivities
 {
@@ -76,6 +77,7 @@ namespace Reactivities
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<ChatHub>("/chat");
             });
 
             app.UseSpa(spa =>

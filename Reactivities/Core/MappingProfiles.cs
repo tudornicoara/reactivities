@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AutoMapper;
 using Reactivities.Activities;
+using Reactivities.Comments;
 using Reactivities.DTOs;
 using Reactivities.Entities;
 
@@ -25,6 +26,11 @@ namespace Reactivities.Core
 
             CreateMap<AppUser, Profiles.Profile>()
                 .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
+            
+            CreateMap<Comment, CommentDto>()
+                .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.Author.DisplayName))
+                .ForMember(d => d.Username, o => o.MapFrom(s => s.Author.UserName))
+                .ForMember(d => d.Image, o => o.MapFrom(s => s.Author.Photos.FirstOrDefault(x => x.IsMain).Url));
         }
     }
 }
