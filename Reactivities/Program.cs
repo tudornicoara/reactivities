@@ -1,4 +1,5 @@
 using Reactivities.Activities;
+using Reactivities.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
