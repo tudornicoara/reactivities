@@ -30,6 +30,54 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\asset-manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\culture.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\drinks.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\film.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\food.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\music.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\categoryImages\travel.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\logo.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\placeholder.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\user.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\favicon.ico" />
+      <_ContentIncludedByDefault Remove="wwwroot\index.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\logo192.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\logo512.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\manifest.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\robots.txt" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\2.d1b3359e.chunk.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\2.d1b3359e.chunk.css.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\main.c317e30c.chunk.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\main.c317e30c.chunk.css.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\2.8d002dfd.chunk.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\2.8d002dfd.chunk.js.LICENSE.txt" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\2.8d002dfd.chunk.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\3.f2c98e05.chunk.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\3.f2c98e05.chunk.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\main.c67ad7ba.chunk.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\main.c67ad7ba.chunk.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\runtime-main.a7c6b47e.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\runtime-main.a7c6b47e.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\brand-icons.278156e4.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\brand-icons.65a2fb6d.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\brand-icons.6729d297.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\brand-icons.cac87dc0.woff" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\brand-icons.d68fa3e6.eot" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\flags.99f63ae7.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\icons.38c6d8ba.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\icons.425399f8.woff" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\icons.62d9dae4.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\icons.a01e3f2d.eot" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\icons.c656b8ca.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\outline-icons.53671035.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\outline-icons.687a4990.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\outline-icons.752905fa.eot" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\outline-icons.9c4845b4.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\outline-icons.ddae9b1b.woff" />
+    </ItemGroup>
+
 <!--    <ItemGroup>-->
 <!--        &lt;!&ndash; Don't publish the SPA source files, but do show them in the project files list &ndash;&gt;-->
 <!--        <Content Remove="$(SpaRoot)**" />-->
