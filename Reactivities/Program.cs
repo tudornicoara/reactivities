@@ -15,10 +15,10 @@ builder.Services.AddControllersWithViews(opt =>
     });
 
 // In production, the React files will be served from this directory
-builder.Services.AddSpaStaticFiles(configuration =>
-{
-    configuration.RootPath = "ClientApp/build";
-});
+// builder.Services.AddSpaStaticFiles(configuration =>
+// {
+//     configuration.RootPath = "ClientApp/build";
+// });
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
