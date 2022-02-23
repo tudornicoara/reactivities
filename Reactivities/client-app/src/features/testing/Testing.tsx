@@ -68,6 +68,7 @@ export default function Testing() {
             <Divider />
             <Header size='medium' content='Searchable dropdown' />
             <Dropdown
+                icon='search'
                 placeholder='Select Country'
                 search
                 selection
