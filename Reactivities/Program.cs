@@ -45,6 +45,9 @@ else
 //app.UseStaticFiles();
 //app.UseSpaStaticFiles();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
@@ -54,17 +57,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 app.MapHub<ChatHub>("/chat");
+app.MapFallbackToController("Index", "Fallback");
 
-// app.UseSpa(spa =>
-// {
-//     spa.Options.SourcePath = "client-app";
-//             
-//     if (app.Environment.IsDevelopment())
-//     {
-//         //spa.UseReactDevelopmentServer(npmScript: "start");
-//         spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-//     }
-// });
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 using var scope = app.Services.CreateScope();
 
