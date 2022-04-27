@@ -18,13 +18,23 @@ import ProfilePage from "../../features/profiles/ProfilePage";
 import Testing from "../../features/testing/Testing";
 import PrivateRoute from "./PrivateRoute";
 
+function isTokenExpired(token: string) {
+    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+}
+
 function App() {
     const location = useLocation();
     const {commonStore, userStore} = useStore();
     
     useEffect(() => {
         if (commonStore.token) {
-            userStore.getUser().finally(() => commonStore.setAppLoaded());
+            if (!isTokenExpired(commonStore.token))
+                userStore.getUser().finally(() => commonStore.setAppLoaded());
+            else {
+                userStore.logout();
+                commonStore.setAppLoaded();
+            }
         } else {
             commonStore.setAppLoaded();
         }
