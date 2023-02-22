@@ -1,4 +1,8 @@
-﻿1. Delete wwwroot
+﻿Creating postgres container:
+1. docker run --name rectivities-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+
+Deploy:
+1. Delete wwwroot
 2. In client-app/ run `npm run build`
 3. Commit changes
 4. Run `git push heroku production:master`
