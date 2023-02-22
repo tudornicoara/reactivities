@@ -13,6 +13,8 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration config)
     {
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
         services.AddDbContext<DataContext>(options =>
@@ -21,7 +23,7 @@ public static class ApplicationServiceExtensions
 
             string connStr;
 
-            // Depending on if in development or production, use either Heroku-provided
+            // Depending on if in development or production, use either FlyIO
             // connection string, or development connection string from env var.
             if (env == "Development")
             {
@@ -30,7 +32,7 @@ public static class ApplicationServiceExtensions
             }
             else
             {
-                // Use connection string provided at runtime by Heroku.
+                // Use connection string provided at runtime by Flyio.
                 var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
                 // Parse connection URL to connection string for Npgsql
@@ -44,11 +46,11 @@ public static class ApplicationServiceExtensions
                 var pgHost = pgHostPort.Split(":")[0];
                 var pgPort = pgHostPort.Split(":")[1];
 
-                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}; SSL Mode=Require; Trust Server Certificate=true";
+                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
             }
 
             // Whether the connection string came from the local development configuration file
-            // or from the environment variable from Heroku, use it to set up your DbContext.
+            // or from the environment variable from FlyIO, use it to set up your DbContext.
             options.UseNpgsql(connStr);
         });
 

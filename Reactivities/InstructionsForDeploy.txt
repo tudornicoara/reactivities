@@ -1,8 +1,18 @@
 ﻿Creating postgres container:
-1. docker run --name rectivities-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+1. docker run --name reactivities-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
 
 Deploy:
 1. Delete wwwroot
 2. In client-app/ run `npm run build`
 3. Commit changes
-4. Run `git push heroku production:master`
+4. docker lolgin
+5. docker build -t <docker-username>/reactivities .
+(5 optional testing).
+    Copy "ConnectionStrings" and "TokenKey" to appsettings.json
+    At "DefaultConnection" -> Server: Replace localhost with host.docker.internal
+    docker run --rm -it -p 8080:80 tudornicoara/reactivities
+    Check localhost:8080
+6. docker push  <docker-username>/reactivities:latest
+7. generate fly.toml
+ fly launch --image <docker-username>/reactivities:latest
+ insert the environment variables in the file
