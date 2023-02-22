@@ -1,23 +1,12 @@
-using Reactivities.Activities;
 using Reactivities.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to container
-builder.Services.AddControllersWithViews(opt =>
-    {
-        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-        opt.Filters.Add(new AuthorizeFilter(policy));
-    })
-    .AddFluentValidation(config =>
-    {
-        config.RegisterValidatorsFromAssemblyContaining<Create>();
-    });
-
-// In production, the React files will be served from this directory
-builder.Services.AddSpaStaticFiles(configuration =>
+builder.Services.AddControllers(opt =>
 {
-    configuration.RootPath = "ClientApp/build";
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -41,30 +30,13 @@ else
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
-//app.UseStaticFiles();
-//app.UseSpaStaticFiles();
-
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+app.MapControllers();
 app.MapHub<ChatHub>("/chat");
-
-// app.UseSpa(spa =>
-// {
-//     spa.Options.SourcePath = "client-app";
-//             
-//     if (app.Environment.IsDevelopment())
-//     {
-//         //spa.UseReactDevelopmentServer(npmScript: "start");
-//         spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-//     }
-// });
 
 using var scope = app.Services.CreateScope();
 

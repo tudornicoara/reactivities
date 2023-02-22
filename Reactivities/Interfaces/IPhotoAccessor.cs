@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Reactivities.Photos;
-using System.Threading.Tasks;
+﻿using Reactivities.Photos;
 
-namespace Reactivities.Interfaces
+namespace Reactivities.Interfaces;
+
+public interface IPhotoAccessor
 {
-    public interface IPhotoAccessor
-    {
-        Task<PhotoUploadResult> AddPhoto(IFormFile file);
-        Task<string> DeletePhoto(string publicId);
-    }
+    Task<PhotoUploadResult> AddPhoto(IFormFile file);
+    Task<string> DeletePhoto(string publicId);
 }

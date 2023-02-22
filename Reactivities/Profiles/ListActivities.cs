@@ -1,56 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Reactivities.Core;
-using Reactivities.Data;
 
-namespace Reactivities.Profiles
+namespace Reactivities.Profiles;
+
+public class ListActivities
 {
-    public class ListActivities
+    public class Query : IRequest<Result<List<UserActivityDto>>>
     {
-        public class Query : IRequest<Result<List<UserActivityDto>>>
+        public string Username { get; set; }
+        public string Predicate { get; set; }
+    }
+
+    public class Handler : IRequestHandler<Query, Result<List<UserActivityDto>>>
+    {
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+
+        public Handler(DataContext context, IMapper mapper)
         {
-            public string Username { get; set; }
-            public string Predicate { get; set; }
+            _mapper = mapper;
+            _context = context;
         }
-        
-        public class Handler : IRequestHandler<Query, Result<List<UserActivityDto>>>
+
+        public async Task<Result<List<UserActivityDto>>> Handle(Query
+            request, CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IMapper _mapper;
-            public Handler(DataContext context, IMapper mapper)
+            var query = _context.ActivityAttendees
+                .Where(u => u.AppUser.UserName == request.Username)
+                .OrderBy(a => a.Activity.Date)
+                .ProjectTo<UserActivityDto>(_mapper.ConfigurationProvider)
+                .AsQueryable();
+
+            query = request.Predicate switch
             {
-                _mapper = mapper;
-                _context = context;
-            }
-            
-            public async Task<Result<List<UserActivityDto>>> Handle(Query
-                request, CancellationToken cancellationToken)
-            {
-                var query = _context.ActivityAttendees
-                    .Where(u => u.AppUser.UserName == request.Username)
-                    .OrderBy(a => a.Activity.Date)
-                    .ProjectTo<UserActivityDto>(_mapper.ConfigurationProvider)
-                    .AsQueryable();
-                
-                query = request.Predicate switch
-                {
-                    "past" => query.Where(a => a.Date <= DateTime.Now),
-                    "hosting" => query.Where(a => a.HostUsername ==
-                                                  request.Username),
-                    _ => query.Where(a => a.Date >= DateTime.Now)
-                };
-                
-                var activities = await query.ToListAsync();
-                
-                return Result<List<UserActivityDto>>.Success(activities);
-            }
+                "past" => query.Where(a => a.Date <= DateTime.Now),
+                "hosting" => query.Where(a => a.HostUsername ==
+                                              request.Username),
+                _ => query.Where(a => a.Date >= DateTime.Now)
+            };
+
+            var activities = await query.ToListAsync();
+
+            return Result<List<UserActivityDto>>.Success(activities);
         }
     }
 }

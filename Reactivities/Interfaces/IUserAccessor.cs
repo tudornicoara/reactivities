@@ -1,7 +1,6 @@
-﻿namespace Reactivities.Interfaces
+﻿namespace Reactivities.Interfaces;
+
+public interface IUserAccessor
 {
-    public interface IUserAccessor
-    {
-        string GetUsername();
-    }
+    string GetUsername();
 }

@@ -1,44 +1,39 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Reactivities.Core;
-using Reactivities.Data;
-using System.Threading;
-using System.Threading.Tasks;
 using Reactivities.Interfaces;
 
-namespace Reactivities.Profiles
+namespace Reactivities.Profiles;
+
+public class Details
 {
-    public class Details
+    public class Query : IRequest<Result<Profile>>
     {
-        public class Query : IRequest<Result<Profile>>
+        public string Username { get; set; }
+    }
+
+    public class Handler : IRequestHandler<Query, Result<Profile>>
+    {
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUserAccessor _userAccessor;
+
+        public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
         {
-            public string Username { get; set; }
+            _context = context;
+            _mapper = mapper;
+            _userAccessor = userAccessor;
         }
 
-        public class Handler : IRequestHandler<Query, Result<Profile>>
+        public async Task<Result<Profile>> Handle(Query request, CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IMapper _mapper;
-            private readonly IUserAccessor _userAccessor;
+            var user = await _context.Users
+                .ProjectTo<Profile>(_mapper.ConfigurationProvider,
+                    new {currentUsername = _userAccessor.GetUsername()})
+                .SingleOrDefaultAsync(x => x.Username == request.Username);
 
-            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
-            {
-                _context = context;
-                _mapper = mapper;
-                _userAccessor = userAccessor;
-            }
-
-            public async Task<Result<Profile>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                var user = await _context.Users
-                    .ProjectTo<Profile>(_mapper.ConfigurationProvider, 
-                        new {currentUsername = _userAccessor.GetUsername()})
-                    .SingleOrDefaultAsync(x => x.Username == request.Username);
-
-                return Result<Profile>.Success(user);
-            }
+            return Result<Profile>.Success(user);
         }
     }
 }

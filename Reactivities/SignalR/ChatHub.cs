@@ -1,35 +1,32 @@
-﻿using System;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Reactivities.Comments;
 
-namespace Reactivities.SignalR
+namespace Reactivities.SignalR;
+
+public class ChatHub : Hub
 {
-    public class ChatHub : Hub
+    private readonly IMediator _mediator;
+
+    public ChatHub(IMediator mediator)
     {
-        private readonly IMediator _mediator;
+        _mediator = mediator;
+    }
 
-        public ChatHub(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+    public async Task SendComment(Create.Command command)
+    {
+        var comment = await _mediator.Send(command);
 
-        public async Task SendComment(Create.Command command)
-        {
-            var comment = await _mediator.Send(command);
+        await Clients.Group(command.ActivityId.ToString())
+            .SendAsync("ReceiveComment", comment.Value);
+    }
 
-            await Clients.Group(command.ActivityId.ToString())
-                .SendAsync("ReceiveComment", comment.Value);
-        }
-
-        public override async Task OnConnectedAsync()
-        {
-            var httpContext = Context.GetHttpContext();
-            var activityId = httpContext.Request.Query["activityId"];
-            await Groups.AddToGroupAsync(Context.ConnectionId, activityId);
-            var result = await _mediator.Send(new List.Query {ActivityId = Guid.Parse(activityId)});
-            await Clients.Caller.SendAsync("LoadComments", result.Value);
-        }
+    public override async Task OnConnectedAsync()
+    {
+        var httpContext = Context.GetHttpContext();
+        var activityId = httpContext.Request.Query["activityId"];
+        await Groups.AddToGroupAsync(Context.ConnectionId, activityId);
+        var result = await _mediator.Send(new List.Query {ActivityId = Guid.Parse(activityId)});
+        await Clients.Caller.SendAsync("LoadComments", result.Value);
     }
 }

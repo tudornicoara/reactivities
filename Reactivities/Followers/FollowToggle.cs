@@ -1,68 +1,60 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
 using Reactivities.Core;
-using Reactivities.Data;
 using Reactivities.Entities;
 using Reactivities.Interfaces;
 
-namespace Reactivities.Followers
+namespace Reactivities.Followers;
+
+public class FollowToggle
 {
-    public class FollowToggle
+    public class Command : IRequest<Result<Unit>>
     {
-        public class Command : IRequest<Result<Unit>>
+        public string TargetUsername { get; set; }
+    }
+
+    public class Handler : IRequestHandler<Command, Result<Unit>>
+    {
+        private readonly DataContext _context;
+        private readonly IUserAccessor _userAccessor;
+
+        public Handler(DataContext context, IUserAccessor userAccessor)
         {
-            public string TargetUsername { get; set; }
+            _context = context;
+            _userAccessor = userAccessor;
         }
-        
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IUserAccessor _userAccessor;
+            var observer = await _context.Users.FirstOrDefaultAsync(x =>
+                x.UserName == _userAccessor.GetUsername());
 
-            public Handler(DataContext context, IUserAccessor userAccessor)
+            var target = await _context.Users.FirstOrDefaultAsync(x =>
+                x.UserName == request.TargetUsername);
+
+            if (target == null) return null;
+
+            var following = await _context.UserFollowings.FindAsync(observer.Id, target.Id);
+
+            if (following == null)
             {
-                _context = context;
-                _userAccessor = userAccessor;
+                following = new UserFollowing
+                {
+                    Observer = observer,
+                    Target = target
+                };
+
+                _context.UserFollowings.Add(following);
             }
-            
-            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            else
             {
-                var observer = await _context.Users.FirstOrDefaultAsync(x =>
-                    x.UserName == _userAccessor.GetUsername());
-
-                var target = await _context.Users.FirstOrDefaultAsync(x =>
-                    x.UserName == request.TargetUsername);
-
-                if (target == null) return null;
-
-                var following = await _context.UserFollowings.FindAsync(observer.Id, target.Id);
-
-                if (following == null)
-                {
-                    following = new UserFollowing
-                    {
-                        Observer = observer,
-                        Target = target
-                    };
-
-                    _context.UserFollowings.Add(following);
-                }
-                else
-                {
-                    _context.UserFollowings.Remove(following);
-                }
-
-                var success = await _context.SaveChangesAsync() > 0;
-
-                if (success)
-                {
-                    return Result<Unit>.Success(Unit.Value);
-                }
-
-                return Result<Unit>.Failure("Failed to update following");
+                _context.UserFollowings.Remove(following);
             }
+
+            var success = await _context.SaveChangesAsync() > 0;
+
+            if (success) return Result<Unit>.Success(Unit.Value);
+
+            return Result<Unit>.Failure("Failed to update following");
         }
     }
 }

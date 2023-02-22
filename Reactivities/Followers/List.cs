@@ -1,63 +1,56 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Reactivities.Core;
-using Reactivities.Data;
 using Reactivities.Interfaces;
 using Profile = Reactivities.Profiles.Profile;
 
-namespace Reactivities.Followers
+namespace Reactivities.Followers;
+
+public class List
 {
-    public class List
+    public class Query : IRequest<Result<List<Profile>>>
     {
-        public class Query : IRequest<Result<List<Profile>>>
+        public string Predicate { get; set; }
+        public string Username { get; set; }
+    }
+
+    public class Handler : IRequestHandler<Query, Result<List<Profile>>>
+    {
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUserAccessor _userAccessor;
+
+        public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
         {
-            public string Predicate { get; set; }
-            public string Username { get; set; }
+            _context = context;
+            _mapper = mapper;
+            _userAccessor = userAccessor;
         }
-        
-        public class Handler : IRequestHandler<Query, Result<List<Profile>>>
+
+        public async Task<Result<List<Profile>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IMapper _mapper;
-            private readonly IUserAccessor _userAccessor;
+            var profiles = new List<Profile>();
 
-            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
+            switch (request.Predicate)
             {
-                _context = context;
-                _mapper = mapper;
-                _userAccessor = userAccessor;
+                case "followers":
+                    profiles = await _context.UserFollowings.Where(x => x.Target.UserName == request.Username)
+                        .Select(u => u.Observer)
+                        .ProjectTo<Profile>(_mapper.ConfigurationProvider,
+                            new {currentUsername = _userAccessor.GetUsername()})
+                        .ToListAsync();
+                    break;
+                case "following":
+                    profiles = await _context.UserFollowings.Where(x => x.Observer.UserName == request.Username)
+                        .Select(u => u.Target)
+                        .ProjectTo<Profile>(_mapper.ConfigurationProvider,
+                            new {currentUsername = _userAccessor.GetUsername()})
+                        .ToListAsync();
+                    break;
             }
-            
-            public async Task<Result<List<Profile>>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                var profiles = new List<Profile>();
 
-                switch (request.Predicate)
-                {
-                    case "followers":
-                        profiles = await _context.UserFollowings.Where(x => x.Target.UserName == request.Username)
-                            .Select(u => u.Observer)
-                            .ProjectTo<Profile>(_mapper.ConfigurationProvider,
-                                new {currentUsername = _userAccessor.GetUsername()})
-                            .ToListAsync();
-                        break;
-                    case "following":
-                        profiles = await _context.UserFollowings.Where(x => x.Observer.UserName == request.Username)
-                            .Select(u => u.Target)
-                            .ProjectTo<Profile>(_mapper.ConfigurationProvider,
-                                new {currentUsername = _userAccessor.GetUsername()})
-                            .ToListAsync();
-                        break;
-                }
-
-                return Result<List<Profile>>.Success(profiles);
-            }
+            return Result<List<Profile>>.Success(profiles);
         }
     }
 }

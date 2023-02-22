@@ -1,55 +1,51 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Reactivities.Core;
-using Reactivities.Data;
 using Reactivities.Interfaces;
 
-namespace Reactivities.Profiles
+namespace Reactivities.Profiles;
+
+public class Edit
 {
-    public class Edit
+    public class Command : IRequest<Result<Unit>>
     {
-        public class Command : IRequest<Result<Unit>>
+        public string DisplayName { get; set; }
+        public string Bio { get; set; }
+    }
+
+    public class CommandValidator : AbstractValidator<Command>
+    {
+        public CommandValidator()
         {
-            public string DisplayName { get; set; }
-            public string Bio { get; set; }
+            RuleFor(x => x.DisplayName).NotEmpty();
         }
-        
-        public class CommandValidator : AbstractValidator<Command>
+    }
+
+    public class Handler : IRequestHandler<Command, Result<Unit>>
+    {
+        private readonly DataContext _context;
+        private readonly IUserAccessor _userAccessor;
+
+        public Handler(DataContext context, IUserAccessor userAccessor)
         {
-            public CommandValidator()
-            {
-                RuleFor(x => x.DisplayName).NotEmpty();
-            }
+            _userAccessor = userAccessor;
+            _context = context;
         }
-        
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+
+        public async Task<Result<Unit>> Handle(Command request,
+            CancellationToken cancellationToken)
         {
-            private readonly DataContext _context;
-            private readonly IUserAccessor _userAccessor;
-            public Handler(DataContext context, IUserAccessor userAccessor)
-            {
-                _userAccessor = userAccessor;
-                _context = context;
-            }
-            
-            public async Task<Result<Unit>> Handle(Command request,
-                CancellationToken cancellationToken)
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(x =>
-                    x.UserName == _userAccessor.GetUsername());
-                
-                user.Bio = request.Bio ?? user.Bio;
-                user.DisplayName = request.DisplayName ?? user.DisplayName;
-                
-                var success = await _context.SaveChangesAsync() > 0;
-                
-                if (success) return Result<Unit>.Success(Unit.Value);
-                
-                return Result<Unit>.Failure("Problem updating profile");
-            }
+            var user = await _context.Users.FirstOrDefaultAsync(x =>
+                x.UserName == _userAccessor.GetUsername());
+
+            user.Bio = request.Bio ?? user.Bio;
+            user.DisplayName = request.DisplayName ?? user.DisplayName;
+
+            var success = await _context.SaveChangesAsync() > 0;
+
+            if (success) return Result<Unit>.Success(Unit.Value);
+
+            return Result<Unit>.Failure("Problem updating profile");
         }
     }
 }

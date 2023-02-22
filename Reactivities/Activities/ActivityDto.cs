@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Reactivities.DTOs;
-using Reactivities.Profiles;
+﻿using Reactivities.DTOs;
 
 namespace Reactivities.Activities
 {
