@@ -39,8 +39,6 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.Use(async (context, next) =>
     {
         context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
@@ -53,27 +51,27 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");
 app.MapFallbackToController("Index", "Fallback");
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 using var scope = app.Services.CreateScope();
-
 var services = scope.ServiceProvider;
 
 try
 {
- var context = services.GetRequiredService<DataContext>();
- var userManager = services.GetRequiredService<UserManager<AppUser>>();
- await context.Database.MigrateAsync();
- await Seed.SeedData(context, userManager);
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedData(context, userManager);
 }
 catch (Exception e)
 {
- var logger = services.GetRequiredService<ILogger<Program>>();
- logger.LogError(e, "An error occured during migration");
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(e, "An error occured during migration");
 }
 
 await app.RunAsync();
